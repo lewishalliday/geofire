@@ -1,56 +1,40 @@
-// swift-tools-version:5.3
 import PackageDescription
 
 let package = Package(
-    name: "GeoFire",
-    defaultLocalization: "en",
-    platforms: [.iOS(.v11), .macOS(.v10_12), .tvOS(.v10), .watchOS(.v7)],
+    name: "geofire-objc",
+    platforms: [
+        .iOS(.v13)
+    ],
     products: [
         .library(
             name: "GeoFire",
             targets: ["GeoFire"]
-        ),
-        .library(
-            name: "GeoFireUtils",
-            targets: ["GeoFireUtils"]
         )
     ],
     dependencies: [
-        .package(name: "Firebase",
-                 url: "https://github.com/firebase/firebase-ios-sdk.git",
-                 "7.0.0"..<"9.0.0"),
+        .package(
+            name: "Firebase", 
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            "7.0.0" ..< "7.6.0"
+        ),
+        .package(
+            name: "FirebaseFirestore", 
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            .exact("1.19.0")
+        )
     ],
     targets: [
         .target(
             name: "GeoFire",
             dependencies: [
-                "GeoFireUtils",
-                .product(name: "FirebaseDatabase", package: "Firebase")
+                "Firebase",
+                "FirebaseFirestore"
             ],
-            path: "GeoFire",
-            exclude: [
-                "./Utils",
-            ],
-            publicHeadersPath: "./API"
+            path: "GeoFire/Implementation"
         ),
         .testTarget(
             name: "GeoFireTests",
-            dependencies: [
-                "GeoFire"
-            ],
-            path: "GeoFireTests",
-            exclude: [
-                "GeoFireTests-Info.plist",
-            ],
-            cSettings: [
-                .headerSearchPath("../GeoFire/API"),
-                .headerSearchPath("../GeoFire/Utils"),
-            ]
-        ),
-        .target(
-            name: "GeoFireUtils",
-            path: "GeoFire/Utils",
-            publicHeadersPath: "."
+            dependencies: ["GeoFire"]
         )
     ]
 )
